@@ -25,6 +25,16 @@ namespace Quantization_Tool
         private OxyPlot.Series.LineSeries ScaleTime_Max_NonVacScale = new OxyPlot.Series.LineSeries();
         private OxyPlot.Series.LineSeries ScaleTime_MaxScale = new OxyPlot.Series.LineSeries();
 
+        private PlotModel MassScale_Plot = new PlotModel();
+        private OxyPlot.Series.ScatterSeries[] MassScale_Data;
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max_Mass = new OxyPlot.Series.LineSeries();
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Min_Mass = new OxyPlot.Series.LineSeries();
+
+        private PlotModel EnergyScale_Laplacian_Plot = new PlotModel();
+        private OxyPlot.Series.ScatterSeries[] EnergyScale_Laplacian_Data;
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max_Laplacian = new OxyPlot.Series.LineSeries();
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Min_Laplacian = new OxyPlot.Series.LineSeries();
+
         private PlotModel EnergyScale_Plot = new PlotModel();
         private OxyPlot.Series.ScatterSeries[] EnergyScale_Data;
         private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max = new OxyPlot.Series.LineSeries();
@@ -32,21 +42,33 @@ namespace Quantization_Tool
 
         private PlotModel EnergyScale_Commutator_Plot = new PlotModel();
         private OxyPlot.Series.ScatterSeries[] EnergyScale_Commutator_Data;
-        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max_C = new OxyPlot.Series.LineSeries();
-        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Min_C = new OxyPlot.Series.LineSeries();
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max_Commutator = new OxyPlot.Series.LineSeries();
+        private OxyPlot.Series.LineSeries NonVacScale_Boundary_Min_Commutator = new OxyPlot.Series.LineSeries();
 
-        private PlotModel EnergyScale_HeatMap_Plot = new PlotModel();
-        private OxyPlot.Series.HeatMapSeries EnergyScale_HeatMap = new OxyPlot.Series.HeatMapSeries();
-        private double[,] EnergyScale_HeatMap_Data;
-        private double energy_variable;
+        private PlotModel EnergyScale_Laplacian_HeatMap_Plot = new PlotModel();
+        private OxyPlot.Series.HeatMapSeries EnergyScale_Laplacian_HeatMap = new OxyPlot.Series.HeatMapSeries();
+        private double[,] EnergyScale_Laplacian_HeatMap_Data;
+        private double energy_laplacian_variable;
 
         private PlotModel EnergyScale_Commutator_HeatMap_Plot = new PlotModel();
         private OxyPlot.Series.HeatMapSeries EnergyScale_Commutator_HeatMap = new OxyPlot.Series.HeatMapSeries();
         private double[,] EnergyScale_Commutator_HeatMap_Data;
         private double energy_commutator_variable;
 
+        private PlotModel EnergyScale_HeatMap_Plot = new PlotModel();
+        private OxyPlot.Series.HeatMapSeries EnergyScale_HeatMap = new OxyPlot.Series.HeatMapSeries();
+        private double[,] EnergyScale_HeatMap_Data;
+        private double energy_variable;
+
+        private PlotModel MassScale_HeatMap_Plot = new PlotModel();
+        private OxyPlot.Series.HeatMapSeries MassScale_HeatMap = new OxyPlot.Series.HeatMapSeries();
+        private double[,] MassScale_HeatMap_Data;
+        private double mass_variable;
+
         private double Max_HeatMap_4plot;
+        private double Max_HeatMap_4plot1;
         private double Max_Commutator_Energy;
+        private double Min_Energy;
 
         private Simulation Sim_Variables;
         private State_Variables Initial_State;
@@ -54,40 +76,12 @@ namespace Quantization_Tool
         private Output_Variables output_Variables;
         private bool Eigenvectors_flag;
 
-        private void Initialize_EnergyScalePlot_Base(PlotModel energyscale_plot, Simulation sim_variables)
-        {
-            //scaletime_plot.PlotAreaBorderThickness = new OxyThickness(0.0);
-            energyscale_plot.PlotMargins = new OxyThickness(8.0);
-
-            OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis();
-            x.Maximum = State.Num_ScaleBins + 2;
-            x.Minimum = 0.0;
-            x.PositionAtZeroCrossing = true;
-            x.Position = OxyPlot.Axes.AxisPosition.Bottom;
-            x.AxislineThickness = 0.5;
-            x.AxislineColor = OxyColors.Black;
-            x.TickStyle = OxyPlot.Axes.TickStyle.Crossing;
-            x.AxisTickToLabelDistance = 0.0;
-            x.FontSize = 8.0;
-            energyscale_plot.Axes.Add(x);
-
-            OxyPlot.Axes.LinearAxis y = new OxyPlot.Axes.LinearAxis();
-            y.PositionAtZeroCrossing = true;
-            y.MajorGridlineStyle = LineStyle.Solid;
-            y.MinorGridlineStyle = LineStyle.Dot;
-            y.AxislineThickness = 0.5;
-            y.AxislineColor = OxyColors.Black;
-            y.TickStyle = OxyPlot.Axes.TickStyle.Crossing;
-            y.AxisTickToLabelDistance = 0.0;
-            y.FontSize = 8.0;
-            energyscale_plot.Axes.Add(y);
-        }
-
         private void Initialize_PointsPlot(PlotModel points_plot, Simulation sim_variables)
         {
             //points_plot.PlotAreaBorderThickness = new OxyThickness(2.0);
             points_plot.PlotMargins = new OxyThickness(0.0);
             points_plot.Title = "Points";
+            points_plot.TitleFontWeight = 5;
 
             OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis();
             //x.Maximum = 1.0 * sim_variables.Coordinate_Range[0];
@@ -109,6 +103,7 @@ namespace Quantization_Tool
             //scaletime_plot.PlotAreaBorderThickness = new OxyThickness(0.0);
             scaletime_plot.PlotMargins = new OxyThickness(8.0);
             scaletime_plot.Title = "Scale vs Time";
+            scaletime_plot.TitleFontWeight = 5;
 
             OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis();
             //x.Maximum = Sim_Variables.Time_Range;
@@ -136,32 +131,101 @@ namespace Quantization_Tool
             y.FontSize = 8.0;
             scaletime_plot.Axes.Add(y);
         }
-        private void Initialize_EnergyScalePlot(PlotModel energyscale_plot, Simulation sim_variables)
+
+        private void Initialize_EnergyScalePlot_Base(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, sim_variables);
-            energyscale_plot.Title = "Energy vs Scale";
+            //scaletime_plot.PlotAreaBorderThickness = new OxyThickness(0.0);
+            energyscale_plot.PlotMargins = new OxyThickness(8.0);
+            energyscale_plot.TitleFontWeight = 5;
+
+            OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis();
+            x.Maximum = State.Num_ScaleBins + 2;
+            x.Minimum = 0.0;
+            x.PositionAtZeroCrossing = true;
+            x.Position = OxyPlot.Axes.AxisPosition.Bottom;
+            x.AxislineThickness = 0.5;
+            x.AxislineColor = OxyColors.Black;
+            x.TickStyle = OxyPlot.Axes.TickStyle.Crossing;
+            x.AxisTickToLabelDistance = 0.0;
+            x.FontSize = 8.0;
+            energyscale_plot.Axes.Add(x);
+
+            OxyPlot.Axes.LinearAxis y = new OxyPlot.Axes.LinearAxis();
+            y.PositionAtZeroCrossing = true;
+            y.MajorGridlineStyle = LineStyle.Solid;
+            y.MinorGridlineStyle = LineStyle.Dot;
+            y.AxislineThickness = 0.5;
+            y.AxislineColor = OxyColors.Black;
+            y.TickStyle = OxyPlot.Axes.TickStyle.Crossing;
+            y.AxisTickToLabelDistance = 0.0;
+            y.FontSize = 8.0; 
+            energyscale_plot.Axes.Add(y);
+
+            boundary_max.Color = OxyColors.Red;
+            boundary_min.Color = OxyColors.Red;
+            boundary_max.StrokeThickness = 1;
+            boundary_min.StrokeThickness = 1;
+            //energyscale_plot.Series.Add(boundary_max);
+            //energyscale_plot.Series.Add(boundary_min);
+            for (int i = 0; i < (state.Num_ScaleBins + 2); i++)
+            {
+                energyscale_data[i] = new OxyPlot.Series.ScatterSeries();
+                energyscale_data[i].MarkerType = MarkerType.Square;
+                energyscale_data[i].MarkerSize = 1;
+                energyscale_data[i].MarkerFill = OxyColors.Black;
+
+                energyscale_plot.Series.Add(energyscale_data[i]);
+            }
+
+        }
+        private void Initialize_MassScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
+        {
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            energyscale_plot.Title = "Mass vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = 0.0;
         }
-        private void Initialize_CommutatorEnergyScalePlot(PlotModel energyscale_plot, Simulation sim_variables)
+        private void Initialize_EnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, sim_variables);
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            energyscale_plot.Title = "Energy vs Scale";
+            energyscale_plot.Axes[1].Maximum = State.Num_Points;
+            energyscale_plot.Axes[1].Minimum = 0;
+        }
+        private void Initialize_LaplacianEnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
+        {
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            energyscale_plot.Title = "Wave Energy vs Scale";
+            energyscale_plot.Axes[1].Maximum = State.Num_Points;
+            energyscale_plot.Axes[1].Minimum = 0.0;
+        }
+        private void Initialize_CommutatorEnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
+        {
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
             energyscale_plot.Title = "Commutator Energy vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = -State.Num_Points;
         }
-        private void Initialize_EnergyScaleHeatMap(PlotModel energyscale_heatmap, Simulation sim_variables)
+
+        private void Initialize_EnergyScaleHeatMap(PlotModel energyscale_heatmap_plot, OxyPlot.Series.HeatMapSeries energyscale_heatmap, State_Variables state)
         {
             //scaletime_plot.PlotAreaBorderThickness = new OxyThickness(0.0);
-            energyscale_heatmap.PlotMargins = new OxyThickness(0.0);
-            energyscale_heatmap.Title = "Energy vs Scale";
+            energyscale_heatmap_plot.PlotMargins = new OxyThickness(0.0);
+            energyscale_heatmap_plot.TitleFontWeight = 5;
 
             OxyPlot.Axes.LinearColorAxis xy = new OxyPlot.Axes.LinearColorAxis();
             xy.Palette = OxyPalettes.Jet(500);
             //xy.HighColor = OxyColors.Gray;
             //xy.LowColor = OxyColors.Black;
             //xy.Position = OxyPlot.Axes.AxisPosition.Right;
-            energyscale_heatmap.Axes.Add(xy);
+            energyscale_heatmap_plot.Axes.Add(xy);
+
+            energyscale_heatmap.Interpolate = true;
+            energyscale_heatmap.RenderMethod = OxyPlot.Series.HeatMapRenderMethod.Bitmap;
+            energyscale_heatmap_plot.Series.Add(energyscale_heatmap);
+
+            energyscale_heatmap.X0 = 0.0;
+            energyscale_heatmap.X1 = state.Num_ScaleBins;
         }
 
         private int TimeLimit_4plot;
@@ -182,23 +246,26 @@ namespace Quantization_Tool
             // Initialize Values
             Random rand = new Random();
             int _Num_Points = 10;
-            int _Dimension = 2;
+            int _Dimension = 5;
             Eigenvectors_flag = false;
 
             State = new State_Variables(_Num_Points, _Dimension);
             Initial_State = new State_Variables(State.Num_Points, State.Dimension);
 
-            Max_HeatMap_4plot = 80.0;
+            Max_HeatMap_4plot = 100.0;
+            Max_HeatMap_4plot1 = 20.0;
             Max_Commutator_Energy = State.Num_Points;
+            Min_Energy = 0;
 
             TimeLimit_4plot = 200;
             SimTime_Counter = 0;
             RunButton_State = false;
             Sim_Variables = new Simulation(State.Dimension);
-            Sim_Variables.Coordinate_Range[0] = 10.0;
-            Sim_Variables.Coordinate_Range[1] = 10.0;
-            Sim_Variables.Speed_Range[0] = 2.0;
-            Sim_Variables.Speed_Range[1] = 2.0;
+            for (int i_d = 0; i_d < _Dimension; i_d++)
+            {
+                Sim_Variables.Coordinate_Range[i_d] = 10.0;
+                Sim_Variables.Speed_Range[i_d] = 2.0;
+            }
 
             Sim_Variables.Time_Range = 5.0;
 
@@ -243,7 +310,7 @@ namespace Quantization_Tool
 
             //
             
-            plotView1.Model = Points_Plot;
+            topMiddle_plotView.Model = Points_Plot;
             Initialize_PointsPlot(Points_Plot, Sim_Variables);
             Points_Data.MarkerType = MarkerType.Circle;
             Points_Data.MarkerSize = 3;
@@ -251,11 +318,14 @@ namespace Quantization_Tool
 
             for (uint i_p = 0; i_p < State.Num_Points; i_p++)
             {
-                Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], State.Positions[i_p][1]));
+                if (State.Dimension == 1)
+                    Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], 0));
+                else
+                    Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], State.Positions[i_p][1]));
             }
             Points_Plot.Series.Add(Points_Data);
 
-            plotView2.Model = ScaleTime_Plot;
+            bottomMiddle_plotView.Model = ScaleTime_Plot;
             Initialize_ScaleTimePlot(ScaleTime_Plot, Sim_Variables);
             ScaleTime_MinScale.Color = OxyColors.Red;
             ScaleTime_Min_NonVacScale.Color = OxyColors.Black;
@@ -267,59 +337,44 @@ namespace Quantization_Tool
             ScaleTime_Plot.Series.Add(ScaleTime_Max_NonVacScale);
             ScaleTime_Plot.Series.Add(ScaleTime_MaxScale);
 
-            //plotView3.Model = EnergyScale_Plot;
-            Initialize_EnergyScalePlot(EnergyScale_Plot, Sim_Variables);
-            EnergyScale_Data = new OxyPlot.Series.ScatterSeries[State.Num_ScaleBins + 2];
-            NonVacScale_Boundary_Max.Color = OxyColors.Red;
-            NonVacScale_Boundary_Min.Color = OxyColors.Red;
-            EnergyScale_Plot.Series.Add(NonVacScale_Boundary_Max);
-            EnergyScale_Plot.Series.Add(NonVacScale_Boundary_Min);
-            for (int i=0; i < (State.Num_ScaleBins + 2); i++)
-            {
-                EnergyScale_Data[i] = new OxyPlot.Series.ScatterSeries();
-                EnergyScale_Data[i].MarkerType = MarkerType.Square;
-                EnergyScale_Data[i].MarkerSize = 1;
-                EnergyScale_Data[i].MarkerFill = OxyColors.Black;
-
-                EnergyScale_Plot.Series.Add(EnergyScale_Data[i]);
-            }
-
-            plotView3.Model = EnergyScale_Commutator_Plot;
-            Initialize_CommutatorEnergyScalePlot(EnergyScale_Commutator_Plot, Sim_Variables);
+            topRight_plotView.Model = EnergyScale_Laplacian_Plot;
+            EnergyScale_Laplacian_Data = new OxyPlot.Series.ScatterSeries[State.Num_ScaleBins + 2];
+            Initialize_LaplacianEnergyScalePlot(EnergyScale_Laplacian_Plot, EnergyScale_Laplacian_Data, NonVacScale_Boundary_Max_Laplacian, NonVacScale_Boundary_Min_Laplacian, Sim_Variables, State);
+            bottomRight_plotView.Model = EnergyScale_Commutator_Plot;
             EnergyScale_Commutator_Data = new OxyPlot.Series.ScatterSeries[State.Num_ScaleBins + 2];
-            NonVacScale_Boundary_Max_C.Color = OxyColors.Red;
-            NonVacScale_Boundary_Min_C.Color = OxyColors.Red;
-            EnergyScale_Commutator_Plot.Series.Add(NonVacScale_Boundary_Max_C);
-            EnergyScale_Commutator_Plot.Series.Add(NonVacScale_Boundary_Min_C);
-            for (int i = 0; i < (State.Num_ScaleBins + 2); i++)
-            {
-                EnergyScale_Commutator_Data[i] = new OxyPlot.Series.ScatterSeries();
-                EnergyScale_Commutator_Data[i].MarkerType = MarkerType.Square;
-                EnergyScale_Commutator_Data[i].MarkerSize = 1;
-                EnergyScale_Commutator_Data[i].MarkerFill = OxyColors.Black;
+            Initialize_CommutatorEnergyScalePlot(EnergyScale_Commutator_Plot, EnergyScale_Commutator_Data, NonVacScale_Boundary_Max_Commutator, NonVacScale_Boundary_Min_Commutator, Sim_Variables, State);
+            topLeft_plotView.Model = MassScale_Plot;
+            MassScale_Data = new OxyPlot.Series.ScatterSeries[State.Num_ScaleBins + 2];
+            Initialize_MassScalePlot(MassScale_Plot, MassScale_Data, NonVacScale_Boundary_Max_Mass, NonVacScale_Boundary_Min_Mass, Sim_Variables, State);
+            bottomLeft_plotView.Model = EnergyScale_Plot;
+            EnergyScale_Data = new OxyPlot.Series.ScatterSeries[State.Num_ScaleBins + 2];
+            Initialize_EnergyScalePlot(EnergyScale_Plot, EnergyScale_Data, NonVacScale_Boundary_Max, NonVacScale_Boundary_Min, Sim_Variables, State);
 
-                EnergyScale_Commutator_Plot.Series.Add(EnergyScale_Commutator_Data[i]);
-            }
+            plot_plotView.Model = EnergyScale_Commutator_HeatMap_Plot;
+            //bottomRight_plotView.Model = EnergyScale_Commutator_HeatMap_Plot;
+            Initialize_EnergyScaleHeatMap(EnergyScale_Commutator_HeatMap_Plot, EnergyScale_Commutator_HeatMap, State);
+            EnergyScale_Commutator_HeatMap_Plot.Title = "Commutator Energy vs Scale";
+            EnergyScale_Commutator_HeatMap.Y0 = -State.Num_EnergyBins;
+            EnergyScale_Commutator_HeatMap.Y1 = State.Num_EnergyBins;
 
-            //plotView3.Model = EnergyScale_Commutator_HeatMap_Plot;
-            Initialize_EnergyScaleHeatMap(EnergyScale_Commutator_HeatMap_Plot, Sim_Variables);
-            EnergyScale_Commutator_HeatMap.X0 = 0.0;
-            EnergyScale_Commutator_HeatMap.X1 = State.Num_ScaleBins;
-            EnergyScale_Commutator_HeatMap.Y0 = - State.Num_EnergyBins;
-            EnergyScale_Commutator_HeatMap.Y1 = State.Num_EnergyBins; 
-            EnergyScale_Commutator_HeatMap.Interpolate = true;
-            EnergyScale_Commutator_HeatMap.RenderMethod = OxyPlot.Series.HeatMapRenderMethod.Bitmap;
-            EnergyScale_Commutator_HeatMap_Plot.Series.Add(EnergyScale_Commutator_HeatMap);
+            //topRight_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
+            Initialize_EnergyScaleHeatMap(EnergyScale_Laplacian_HeatMap_Plot, EnergyScale_Laplacian_HeatMap, State);
+            EnergyScale_Laplacian_HeatMap_Plot.Title = "Laplacian Energy vs Scale";
+            EnergyScale_Laplacian_HeatMap.Y0 = 0.0;
+            EnergyScale_Laplacian_HeatMap.Y1 = State.Num_EnergyBins;
 
-            plotView4.Model = EnergyScale_HeatMap_Plot;
-            Initialize_EnergyScaleHeatMap(EnergyScale_HeatMap_Plot, Sim_Variables);
-            EnergyScale_HeatMap.X0 = 0.0;
-            EnergyScale_HeatMap.X1 = State.Num_ScaleBins;
+            //plot_plotView.Model = EnergyScale_HeatMap_Plot;
+            //bottomLeft_plotView.Model = EnergyScale_HeatMap_Plot;
+            Initialize_EnergyScaleHeatMap(EnergyScale_HeatMap_Plot, EnergyScale_HeatMap, State);
+            EnergyScale_HeatMap_Plot.Title = "Energy vs Scale";
             EnergyScale_HeatMap.Y0 = 0.0;
             EnergyScale_HeatMap.Y1 = State.Num_EnergyBins;
-            EnergyScale_HeatMap.Interpolate = true;
-            EnergyScale_HeatMap.RenderMethod = OxyPlot.Series.HeatMapRenderMethod.Bitmap;
-            EnergyScale_HeatMap_Plot.Series.Add(EnergyScale_HeatMap);
+
+            //topLeft_plotView.Model = MassScale_HeatMap_Plot;
+            Initialize_EnergyScaleHeatMap(MassScale_HeatMap_Plot, MassScale_HeatMap, State);
+            MassScale_HeatMap_Plot.Title = "Mass vs Scale";
+            MassScale_HeatMap.Y0 = 0.0;
+            MassScale_HeatMap.Y1 = State.Num_EnergyBins;
 
             // Threading
             MRE = new ManualResetEvent(false);
@@ -380,66 +435,89 @@ namespace Quantization_Tool
                 ScaleTime_MaxScale.Points.Add(new OxyPlot.DataPoint(SimTime_Counter, output_Variables.Max_Scale));
 
                 Points_Data.Points.Clear();
+
+                NonVacScale_Boundary_Min_Laplacian.Points.Clear();
+                NonVacScale_Boundary_Max_Laplacian.Points.Clear();
+                NonVacScale_Boundary_Min_Laplacian.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Min_Laplacian.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
+                NonVacScale_Boundary_Max_Laplacian.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Max_Laplacian.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
+
+                NonVacScale_Boundary_Min_Commutator.Points.Clear();
+                NonVacScale_Boundary_Max_Commutator.Points.Clear();
+                NonVacScale_Boundary_Min_Commutator.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, -Max_Commutator_Energy));
+                NonVacScale_Boundary_Min_Commutator.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Max_Commutator_Energy));
+                NonVacScale_Boundary_Max_Commutator.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, -Max_Commutator_Energy));
+                NonVacScale_Boundary_Max_Commutator.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Max_Commutator_Energy));
+
                 NonVacScale_Boundary_Min.Points.Clear();
                 NonVacScale_Boundary_Max.Points.Clear();
-                NonVacScale_Boundary_Min_C.Points.Clear();
-                NonVacScale_Boundary_Max_C.Points.Clear();
-                NonVacScale_Boundary_Min.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Min.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Min_Energy));
                 NonVacScale_Boundary_Min.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
-                NonVacScale_Boundary_Max.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Max.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Min_Energy));
                 NonVacScale_Boundary_Max.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
 
-                NonVacScale_Boundary_Min_C.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, -Max_Commutator_Energy));
-                NonVacScale_Boundary_Min_C.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Max_Commutator_Energy));
-                NonVacScale_Boundary_Max_C.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, -Max_Commutator_Energy));
-                NonVacScale_Boundary_Max_C.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, Max_Commutator_Energy));
+                NonVacScale_Boundary_Min_Mass.Points.Clear();
+                NonVacScale_Boundary_Max_Mass.Points.Clear();
+                NonVacScale_Boundary_Min_Mass.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Min_Mass.Points.Add(new OxyPlot.DataPoint((output_Variables.Min_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
+                NonVacScale_Boundary_Max_Mass.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, 0));
+                NonVacScale_Boundary_Max_Mass.Points.Add(new OxyPlot.DataPoint((output_Variables.Max_NonVacScale / output_Variables.Max_Scale) * State.Num_ScaleBins, State.Num_Points));
 
                 for (uint i_p = 0; i_p < State.Num_Points; i_p++)
                 {
-                    Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], State.Positions[i_p][1]));
-                    EnergyScale_Data[i_p].Points.Clear();
+                    if (State.Dimension == 1)
+                        Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], 0));
+                    else
+                        Points_Data.Points.Add(new OxyPlot.Series.ScatterPoint(State.Positions[i_p][0], State.Positions[i_p][1]));
+
+                    EnergyScale_Laplacian_Data[i_p].Points.Clear();
                     EnergyScale_Commutator_Data[i_p].Points.Clear();
+                    EnergyScale_Data[i_p].Points.Clear();
+                    MassScale_Data[i_p].Points.Clear();
                     for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
-                    {
-                        EnergyScale_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Laplacian_Energy[i_s][i_p]));
+                    {   
+                        if (i_p > 0)
+                            EnergyScale_Laplacian_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Laplacian_Energy[i_s][i_p]));
                         EnergyScale_Commutator_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Commutator_Energy[i_s][i_p]));
+                        EnergyScale_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Energy_Vector[i_s][i_p]));
+                        MassScale_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Mass_Vector[i_s][i_p]));
 
                         if (output_Variables.Commutator_Energy[i_s][i_p] > Max_Commutator_Energy)
                             Max_Commutator_Energy = output_Variables.Commutator_Energy[i_s][i_p];
+
+                        if (output_Variables.Energy_Vector[i_s][i_p] < Min_Energy)
+                            Min_Energy = output_Variables.Energy_Vector[i_s][i_p];
                     }
                 }
                 EnergyScale_Commutator_Plot.Axes[1].Maximum = Max_Commutator_Energy;
                 EnergyScale_Commutator_Plot.Axes[1].Minimum = -Max_Commutator_Energy;
+                EnergyScale_Plot.Axes[1].Minimum = Min_Energy;
 
-                EnergyScale_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                // Laplacian Energy Levels
+                EnergyScale_Laplacian_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
                 for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
-                    energy_variable = (double)(i_e * State.Num_Points) / (double)State.Num_EnergyBins;
+                    energy_laplacian_variable = (double)(i_e * State.Num_Points) / (double)State.Num_EnergyBins;
                     for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
                     {
-                        EnergyScale_HeatMap_Data[i_s, i_e] = 0.0;
+                        EnergyScale_Laplacian_HeatMap_Data[i_s, i_e] = 0.0;
                         for (uint i_p = 0; i_p < State.Num_Points; i_p++)
                         {
-                            EnergyScale_HeatMap_Data[i_s, i_e] += -Math.Log(Math.Abs(energy_variable - output_Variables.Laplacian_Energy[i_s][i_p]));
+                            EnergyScale_Laplacian_HeatMap_Data[i_s, i_e] += -Math.Log(Math.Abs(energy_laplacian_variable - output_Variables.Laplacian_Energy[i_s][i_p]));
                         }
 
-                        //if (double.IsInfinity(EnergyScale_Commutator_HeatMap_Data[i_s, i_e]))
-                        //{
-                        //    EnergyScale_HeatMap_Data[i_s, i_e] = double.NaN;
-                        //}
-
-                        if (EnergyScale_HeatMap_Data[i_s, i_e] > Max_HeatMap_4plot)
-                            EnergyScale_HeatMap_Data[i_s, i_e] = Max_HeatMap_4plot;
+                        if (EnergyScale_Laplacian_HeatMap_Data[i_s, i_e] > Max_HeatMap_4plot)
+                            EnergyScale_Laplacian_HeatMap_Data[i_s, i_e] = Max_HeatMap_4plot;
                     }
                 }
-                EnergyScale_HeatMap.Data = EnergyScale_HeatMap_Data;
+                EnergyScale_Laplacian_HeatMap.Data = EnergyScale_Laplacian_HeatMap_Data;
 
-                // The Commutator Energy Levels
-                EnergyScale_Commutator_HeatMap_Data = new double[State.Num_ScaleBins + 2, 2* State.Num_EnergyBins + 1];
-                for (int index_e = -State.Num_EnergyBins; index_e < (State.Num_EnergyBins + 1); index_e++)
+                // Commutator Energy Levels
+                EnergyScale_Commutator_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
-                    int i_e = index_e + State.Num_EnergyBins;
-                    energy_commutator_variable = (double)(index_e * State.Num_Points * State.Num_Points) / (double)State.Num_EnergyBins;
+                    energy_commutator_variable = (double)(i_e * Max_Commutator_Energy * 2) / (double)State.Num_EnergyBins - Max_Commutator_Energy;
                     for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
                     {
                         EnergyScale_Commutator_HeatMap_Data[i_s, i_e] = 0.0;
@@ -448,24 +526,67 @@ namespace Quantization_Tool
                             EnergyScale_Commutator_HeatMap_Data[i_s, i_e] += -Math.Log(Math.Abs(energy_commutator_variable - output_Variables.Commutator_Energy[i_s][i_p]));
                         }
 
-                        //if (double.IsInfinity(EnergyScale_Commutator_HeatMap_Data[i_s, i_e]))
-                        //{
-                        //    EnergyScale_Commutator_HeatMap_Data[i_s, i_e] = double.NaN;
-                        //}
-
                         if (EnergyScale_Commutator_HeatMap_Data[i_s, i_e] > Max_HeatMap_4plot)
                             EnergyScale_Commutator_HeatMap_Data[i_s, i_e] = Max_HeatMap_4plot;
                     }
                 }
                 EnergyScale_Commutator_HeatMap.Data = EnergyScale_Commutator_HeatMap_Data;
 
+                // Energy Levels
+                EnergyScale_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
+                {
+                    energy_variable = (double)(i_e * (State.Num_Points - Min_Energy)) / (double)State.Num_EnergyBins + Min_Energy;
+                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    {
+                        EnergyScale_HeatMap_Data[i_s, i_e] = 0.0;
+                        for (uint i_p = 0; i_p < State.Num_Points; i_p++)
+                        {
+                            EnergyScale_HeatMap_Data[i_s, i_e] += -Math.Log(Math.Abs(energy_variable - output_Variables.Energy_Vector[i_s][i_p]));
+                        }
+
+                        if (EnergyScale_HeatMap_Data[i_s, i_e] > Max_HeatMap_4plot1)
+                            EnergyScale_HeatMap_Data[i_s, i_e] = Max_HeatMap_4plot1;
+                    }
+                }
+                EnergyScale_HeatMap.Data = EnergyScale_HeatMap_Data;
+
+                // Mass Levels
+                MassScale_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
+                {
+                    mass_variable = (double)(i_e * State.Num_Points) / (double)State.Num_EnergyBins;
+                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    {
+                        MassScale_HeatMap_Data[i_s, i_e] = 0.0;
+                        for (uint i_p = 0; i_p < State.Num_Points; i_p++)
+                        {
+                            MassScale_HeatMap_Data[i_s, i_e] += -Math.Log(Math.Abs(mass_variable - output_Variables.Mass_Vector[i_s][i_p]));
+                        }
+
+                        //if (double.IsInfinity(MassScale_HeatMap_Data[i_s, i_e]))
+                        //{
+                        //    MassScale_HeatMap_Data[i_s, i_e] = double.NaN;
+                        //}
+
+                        if (MassScale_HeatMap_Data[i_s, i_e] > Max_HeatMap_4plot)
+                            MassScale_HeatMap_Data[i_s, i_e] = Max_HeatMap_4plot;
+                    }
+                }
+                MassScale_HeatMap.Data = MassScale_HeatMap_Data;
 
                 ScaleTime_Plot.InvalidatePlot(true);
                 Points_Plot.InvalidatePlot(true);
-                EnergyScale_Plot.InvalidatePlot(true);
+
+                EnergyScale_Laplacian_Plot.InvalidatePlot(true);
                 EnergyScale_Commutator_Plot.InvalidatePlot(true);
-                EnergyScale_HeatMap_Plot.InvalidatePlot(true);
+                EnergyScale_Plot.InvalidatePlot(true);
+                MassScale_Plot.InvalidatePlot(true);
+
+                EnergyScale_Laplacian_HeatMap_Plot.InvalidatePlot(true);
                 EnergyScale_Commutator_HeatMap_Plot.InvalidatePlot(true);
+                EnergyScale_HeatMap_Plot.InvalidatePlot(true);
+                MassScale_HeatMap_Plot.InvalidatePlot(true);
 
                 //watch.Stop();
                 //var elapsed = watch.ElapsedMilliseconds/1000.0;
@@ -494,7 +615,7 @@ namespace Quantization_Tool
             Num_Points = num_points;
             Dimension = dimension;
             Number_Pairs = num_points * (num_points - 1) / 2;
-            Num_ScaleBins = num_points * num_points;
+            Num_ScaleBins = 2 * num_points * num_points;
             Num_EnergyBins = num_points * 100;
 
             Mass_Ratios = new double[num_points];
