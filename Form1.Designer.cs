@@ -45,10 +45,13 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel_Back = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel_bottom = new System.Windows.Forms.TableLayoutPanel();
             this.panel_Plot = new System.Windows.Forms.Panel();
             this.plot_plotView = new OxyPlot.WindowsForms.PlotView();
+            this.tableLayoutPanel_Back = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel_bottom = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label_X = new System.Windows.Forms.Label();
+            this.label_Y = new System.Windows.Forms.Label();
             this.topLeft_Plotpanel.SuspendLayout();
             this.topMiddle_Plotpanel.SuspendLayout();
             this.bottomLeft_Plotpanel.SuspendLayout();
@@ -59,9 +62,10 @@
             this.tabPage1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.panel_Plot.SuspendLayout();
             this.tableLayoutPanel_Back.SuspendLayout();
             this.tableLayoutPanel_bottom.SuspendLayout();
-            this.panel_Plot.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_Run
@@ -268,36 +272,6 @@
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel_Back
-            // 
-            this.tableLayoutPanel_Back.ColumnCount = 1;
-            this.tableLayoutPanel_Back.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Back.Controls.Add(this.tabControl1);
-            this.tableLayoutPanel_Back.Controls.Add(this.tableLayoutPanel_bottom, 0, 1);
-            this.tableLayoutPanel_Back.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel_Back.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel_Back.Name = "tableLayoutPanel_Back";
-            this.tableLayoutPanel_Back.RowCount = 2;
-            this.tableLayoutPanel_Back.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Back.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel_Back.Size = new System.Drawing.Size(3561, 1764);
-            this.tableLayoutPanel_Back.TabIndex = 9;
-            // 
-            // tableLayoutPanel_bottom
-            // 
-            this.tableLayoutPanel_bottom.ColumnCount = 3;
-            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tableLayoutPanel_bottom.Controls.Add(this.button_Run, 1, 0);
-            this.tableLayoutPanel_bottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel_bottom.Location = new System.Drawing.Point(3, 1667);
-            this.tableLayoutPanel_bottom.Name = "tableLayoutPanel_bottom";
-            this.tableLayoutPanel_bottom.RowCount = 1;
-            this.tableLayoutPanel_bottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_bottom.Size = new System.Drawing.Size(3555, 94);
-            this.tableLayoutPanel_bottom.TabIndex = 9;
-            // 
             // panel_Plot
             // 
             this.panel_Plot.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -321,6 +295,65 @@
             this.plot_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
             this.plot_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
             // 
+            // tableLayoutPanel_Back
+            // 
+            this.tableLayoutPanel_Back.ColumnCount = 1;
+            this.tableLayoutPanel_Back.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_Back.Controls.Add(this.tabControl1);
+            this.tableLayoutPanel_Back.Controls.Add(this.tableLayoutPanel_bottom, 0, 1);
+            this.tableLayoutPanel_Back.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel_Back.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel_Back.Name = "tableLayoutPanel_Back";
+            this.tableLayoutPanel_Back.RowCount = 2;
+            this.tableLayoutPanel_Back.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_Back.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel_Back.Size = new System.Drawing.Size(3561, 1764);
+            this.tableLayoutPanel_Back.TabIndex = 9;
+            // 
+            // tableLayoutPanel_bottom
+            // 
+            this.tableLayoutPanel_bottom.ColumnCount = 3;
+            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
+            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel_bottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
+            this.tableLayoutPanel_bottom.Controls.Add(this.button_Run, 1, 0);
+            this.tableLayoutPanel_bottom.Controls.Add(this.flowLayoutPanel1, 2, 0);
+            this.tableLayoutPanel_bottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel_bottom.Location = new System.Drawing.Point(3, 1667);
+            this.tableLayoutPanel_bottom.Name = "tableLayoutPanel_bottom";
+            this.tableLayoutPanel_bottom.RowCount = 1;
+            this.tableLayoutPanel_bottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_bottom.Size = new System.Drawing.Size(3555, 94);
+            this.tableLayoutPanel_bottom.TabIndex = 9;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.label_X);
+            this.flowLayoutPanel1.Controls.Add(this.label_Y);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(1957, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(485, 88);
+            this.flowLayoutPanel1.TabIndex = 1;
+            // 
+            // label_X
+            // 
+            this.label_X.AutoSize = true;
+            this.label_X.Location = new System.Drawing.Point(3, 0);
+            this.label_X.Name = "label_X";
+            this.label_X.Size = new System.Drawing.Size(48, 29);
+            this.label_X.TabIndex = 0;
+            this.label_X.Text = "X : ";
+            // 
+            // label_Y
+            // 
+            this.label_Y.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_Y.AutoSize = true;
+            this.label_Y.Location = new System.Drawing.Point(57, 0);
+            this.label_Y.Name = "label_Y";
+            this.label_Y.Size = new System.Drawing.Size(59, 29);
+            this.label_Y.TabIndex = 1;
+            this.label_Y.Text = ", Y : ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
@@ -339,9 +372,11 @@
             this.tabPage1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.panel_Plot.ResumeLayout(false);
             this.tableLayoutPanel_Back.ResumeLayout(false);
             this.tableLayoutPanel_bottom.ResumeLayout(false);
-            this.panel_Plot.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -369,6 +404,9 @@
         private OxyPlot.WindowsForms.PlotView bottomMiddle_plotView;
         private System.Windows.Forms.Panel panel_Plot;
         private OxyPlot.WindowsForms.PlotView plot_plotView;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label label_X;
+        private System.Windows.Forms.Label label_Y;
     }
 }
 
