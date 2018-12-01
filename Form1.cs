@@ -178,7 +178,7 @@ namespace Quantization_Tool
             {
                 energyscale_data[i] = new OxyPlot.Series.ScatterSeries();
                 energyscale_data[i].MarkerType = MarkerType.Circle;
-                energyscale_data[i].MarkerSize = 1;
+                energyscale_data[i].MarkerSize = 2;
                 //energyscale_data[i].MarkerFill = OxyColors.Black;
 
                 energyscale_plot.Series.Add(energyscale_data[i]);
@@ -214,7 +214,6 @@ namespace Quantization_Tool
             energyscale_plot.MouseLeave += LaplacianEnergyScalePlot_MouseLeave;
             energyscale_plot.MouseMove += LaplacianEnergyScalePlot_MouseMove;
         }
-
         private void Initialize_CommutatorEnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
             Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
@@ -355,6 +354,7 @@ namespace Quantization_Tool
             ScaleTime_Plot.Series.Add(ScaleTime_Max_NonVacScale);
             ScaleTime_Plot.Series.Add(ScaleTime_MaxScale);
 
+            //plot_plotView.Model = EnergyScale_Laplacian_Plot;
             topRight_plotView.Model = EnergyScale_Laplacian_Plot;
             EnergyScale_Laplacian_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
             Initialize_LaplacianEnergyScalePlot(EnergyScale_Laplacian_Plot, EnergyScale_Laplacian_Data, NonVacScale_Boundary_Max_Laplacian, NonVacScale_Boundary_Min_Laplacian, Sim_Variables, State);
@@ -376,7 +376,7 @@ namespace Quantization_Tool
             EnergyScale_Commutator_HeatMap.Y0 = -State.Num_EnergyBins;
             EnergyScale_Commutator_HeatMap.Y1 = State.Num_EnergyBins;
 
-            plot_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
+            //plot_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
             //topRight_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
             Initialize_EnergyScaleHeatMap(EnergyScale_Laplacian_HeatMap_Plot, EnergyScale_Laplacian_HeatMap, State);
             EnergyScale_Laplacian_HeatMap_Plot.Title = "Laplacian Energy vs Scale";
@@ -424,7 +424,7 @@ namespace Quantization_Tool
             }
 
             if (Selected_Point != null)
-                Selected_Point.Size = 1;
+                Selected_Point.Size = 2;
 
             Selected_Plot = MassScale_Plot;
             Selected_Series = MassScale_Plot.Series[selected_index] as OxyPlot.Series.ScatterSeries;
@@ -438,7 +438,7 @@ namespace Quantization_Tool
         {
             if (Selected_Series != null)
             {
-                Selected_Point.Size = 1;
+                Selected_Point.Size = 2;
 
                 int i_s = (int)MassScale_Plot.Axes[0].InverseTransform(e.Position.X);
                 if (i_s > (State.Num_ScaleBins + 1))
@@ -484,7 +484,7 @@ namespace Quantization_Tool
             }
 
             if (Selected_Point != null)
-                Selected_Point.Size = 1;
+                Selected_Point.Size = 2;
 
             Selected_Plot = EnergyScale_Laplacian_Plot;
             Selected_Series = EnergyScale_Laplacian_Plot.Series[selected_index] as OxyPlot.Series.ScatterSeries;
@@ -498,8 +498,8 @@ namespace Quantization_Tool
             // Eigen Vectors
             for (int i_p = 0; i_p < State.Num_Points; i_p++)
             {
-                Points_Data[i_p].MarkerFill = OxyColors.Black;
-                //Points_Data[i_p].MarkerFill = OxyPalettes.Jet(500).Colors[250 + (int)Math.Round(output_Variables.Orthonormal_Transformation[i_s][selected_index, i_p] * 250)];
+                //Points_Data[i_p].MarkerFill = OxyColors.Black;
+                Points_Data[i_p].MarkerFill = OxyPalettes.Jet(500).Colors[250 + (int)Math.Round(output_Variables.Orthonormal_Transformation[i_s][i_p, selected_index] * 250)];
                 Points_Data[i_p].LabelFormatString = Math.Round(output_Variables.Orthonormal_Transformation[i_s][i_p, selected_index] * 100).ToString();                
             }
             Points_Plot.InvalidatePlot(true);
@@ -508,7 +508,7 @@ namespace Quantization_Tool
         {
             if (Selected_Series != null)
             {
-                Selected_Point.Size = 1;
+                Selected_Point.Size = 2;
 
                 int i_s = (int)EnergyScale_Laplacian_Plot.Axes[0].InverseTransform(e.Position.X);
                 if (i_s > (State.Num_ScaleBins + 1))
@@ -527,8 +527,8 @@ namespace Quantization_Tool
                 // Eigen Vectors
                 for (int i_p = 0; i_p < State.Num_Points; i_p++)
                 {
-                    Points_Data[i_p].MarkerFill = OxyColors.Black;
-                    //Points_Data[i_p].MarkerFill = OxyPalettes.Jet(500).Colors[250 + (int)Math.Round(output_Variables.Orthonormal_Transformation[i_s][Selected_Index, i_p] * 250)];
+                    //Points_Data[i_p].MarkerFill = OxyColors.Black;
+                    Points_Data[i_p].MarkerFill = OxyPalettes.Jet(200).Colors[100 + (int)Math.Round(output_Variables.Orthonormal_Transformation[i_s][i_p, Selected_Index] * 99)];
                     Points_Data[i_p].LabelFormatString = Math.Round(output_Variables.Orthonormal_Transformation[i_s][i_p, Selected_Index] * 100).ToString();
                 }
                 Points_Plot.InvalidatePlot(true);
@@ -855,7 +855,7 @@ namespace Quantization_Tool
     }
     class Simulation
     {
-        public double Time_Range, dt = 0.05; //Default
+        public double Time_Range, dt = 0.01; //Default
         private int Num_TimeSteps = 1;
 
         public double[] Coordinate_Range, Speed_Range;
