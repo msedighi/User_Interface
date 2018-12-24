@@ -29,19 +29,8 @@
         private void InitializeComponent()
         {
             this.button_Run = new System.Windows.Forms.Button();
-            this.topMiddle_plotView = new OxyPlot.WindowsForms.PlotView();
-            this.bottomLeft_plotView = new OxyPlot.WindowsForms.PlotView();
-            this.topLeft_Plotpanel = new System.Windows.Forms.Panel();
-            this.topLeft_plotView = new OxyPlot.WindowsForms.PlotView();
-            this.topMiddle_Plotpanel = new System.Windows.Forms.Panel();
-            this.bottomLeft_Plotpanel = new System.Windows.Forms.Panel();
-            this.topRight_Plotpanel = new System.Windows.Forms.Panel();
-            this.topRight_plotView = new OxyPlot.WindowsForms.PlotView();
             this.tableLayoutPanel_Plots = new System.Windows.Forms.TableLayoutPanel();
-            this.bottomRight_panel = new System.Windows.Forms.Panel();
-            this.bottomRight_plotView = new OxyPlot.WindowsForms.PlotView();
-            this.bottomMiddle_panel = new System.Windows.Forms.Panel();
-            this.bottomMiddle_plotView = new OxyPlot.WindowsForms.PlotView();
+            this.topLeft_panel = new System.Windows.Forms.Panel();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -52,13 +41,20 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label_X = new System.Windows.Forms.Label();
             this.label_Y = new System.Windows.Forms.Label();
-            this.topLeft_Plotpanel.SuspendLayout();
-            this.topMiddle_Plotpanel.SuspendLayout();
-            this.bottomLeft_Plotpanel.SuspendLayout();
-            this.topRight_Plotpanel.SuspendLayout();
+            this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.bottomRight_Plot_SplitContainer = new Quantization_Tool.Plot_SplitContainer();
+            this.bottomMiddle_Plot_SplitContainer = new Quantization_Tool.Plot_SplitContainer();
+            this.bottomLeft_Plot_SplitContainer = new Quantization_Tool.Plot_SplitContainer();
+            this.topRight_Plot_SplitContainer = new Quantization_Tool.Plot_SplitContainer();
+            this.topMiddle_Plot_SplitContainer = new Quantization_Tool.Plot_SplitContainer();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tableLayoutPanel_Plots.SuspendLayout();
-            this.bottomRight_panel.SuspendLayout();
-            this.bottomMiddle_panel.SuspendLayout();
+            this.topLeft_panel.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -66,6 +62,17 @@
             this.tableLayoutPanel_Back.SuspendLayout();
             this.tableLayoutPanel_bottom.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomRight_Plot_SplitContainer)).BeginInit();
+            this.bottomRight_Plot_SplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomMiddle_Plot_SplitContainer)).BeginInit();
+            this.bottomMiddle_Plot_SplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomLeft_Plot_SplitContainer)).BeginInit();
+            this.bottomLeft_Plot_SplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topRight_Plot_SplitContainer)).BeginInit();
+            this.topRight_Plot_SplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topMiddle_Plot_SplitContainer)).BeginInit();
+            this.topMiddle_Plot_SplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_Run
@@ -79,98 +86,6 @@
             this.button_Run.UseVisualStyleBackColor = true;
             this.button_Run.Click += new System.EventHandler(this.button_Run_Click);
             // 
-            // topMiddle_plotView
-            // 
-            this.topMiddle_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topMiddle_plotView.Location = new System.Drawing.Point(0, 0);
-            this.topMiddle_plotView.Name = "topMiddle_plotView";
-            this.topMiddle_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.topMiddle_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.topMiddle_plotView.TabIndex = 1;
-            this.topMiddle_plotView.Text = "plotView1";
-            this.topMiddle_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.topMiddle_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.topMiddle_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
-            // 
-            // bottomLeft_plotView
-            // 
-            this.bottomLeft_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomLeft_plotView.Location = new System.Drawing.Point(0, 0);
-            this.bottomLeft_plotView.Name = "bottomLeft_plotView";
-            this.bottomLeft_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.bottomLeft_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.bottomLeft_plotView.TabIndex = 2;
-            this.bottomLeft_plotView.Text = "plotView2";
-            this.bottomLeft_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.bottomLeft_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.bottomLeft_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
-            // 
-            // topLeft_Plotpanel
-            // 
-            this.topLeft_Plotpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.topLeft_Plotpanel.Controls.Add(this.topLeft_plotView);
-            this.topLeft_Plotpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topLeft_Plotpanel.Location = new System.Drawing.Point(4, 4);
-            this.topLeft_Plotpanel.Name = "topLeft_Plotpanel";
-            this.topLeft_Plotpanel.Size = new System.Drawing.Size(1169, 790);
-            this.topLeft_Plotpanel.TabIndex = 3;
-            // 
-            // topLeft_plotView
-            // 
-            this.topLeft_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topLeft_plotView.Location = new System.Drawing.Point(0, 0);
-            this.topLeft_plotView.Name = "topLeft_plotView";
-            this.topLeft_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.topLeft_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.topLeft_plotView.TabIndex = 0;
-            this.topLeft_plotView.Text = "plotView3";
-            this.topLeft_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.topLeft_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.topLeft_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
-            // 
-            // topMiddle_Plotpanel
-            // 
-            this.topMiddle_Plotpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.topMiddle_Plotpanel.Controls.Add(this.topMiddle_plotView);
-            this.topMiddle_Plotpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topMiddle_Plotpanel.Location = new System.Drawing.Point(1180, 4);
-            this.topMiddle_Plotpanel.Name = "topMiddle_Plotpanel";
-            this.topMiddle_Plotpanel.Size = new System.Drawing.Size(1169, 790);
-            this.topMiddle_Plotpanel.TabIndex = 4;
-            // 
-            // bottomLeft_Plotpanel
-            // 
-            this.bottomLeft_Plotpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.bottomLeft_Plotpanel.Controls.Add(this.bottomLeft_plotView);
-            this.bottomLeft_Plotpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomLeft_Plotpanel.Location = new System.Drawing.Point(4, 801);
-            this.bottomLeft_Plotpanel.Name = "bottomLeft_Plotpanel";
-            this.bottomLeft_Plotpanel.Size = new System.Drawing.Size(1169, 790);
-            this.bottomLeft_Plotpanel.TabIndex = 5;
-            // 
-            // topRight_Plotpanel
-            // 
-            this.topRight_Plotpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.topRight_Plotpanel.Controls.Add(this.topRight_plotView);
-            this.topRight_Plotpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topRight_Plotpanel.Location = new System.Drawing.Point(2356, 4);
-            this.topRight_Plotpanel.Name = "topRight_Plotpanel";
-            this.topRight_Plotpanel.Size = new System.Drawing.Size(1169, 790);
-            this.topRight_Plotpanel.TabIndex = 6;
-            // 
-            // topRight_plotView
-            // 
-            this.topRight_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topRight_plotView.Location = new System.Drawing.Point(0, 0);
-            this.topRight_plotView.Name = "topRight_plotView";
-            this.topRight_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.topRight_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.topRight_plotView.TabIndex = 0;
-            this.topRight_plotView.Text = "plotView4";
-            this.topRight_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.topRight_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.topRight_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
-            // 
             // tableLayoutPanel_Plots
             // 
             this.tableLayoutPanel_Plots.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -178,12 +93,12 @@
             this.tableLayoutPanel_Plots.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel_Plots.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel_Plots.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel_Plots.Controls.Add(this.topRight_Plotpanel, 2, 0);
-            this.tableLayoutPanel_Plots.Controls.Add(this.topLeft_Plotpanel, 0, 0);
-            this.tableLayoutPanel_Plots.Controls.Add(this.topMiddle_Plotpanel, 1, 0);
-            this.tableLayoutPanel_Plots.Controls.Add(this.bottomLeft_Plotpanel, 0, 1);
-            this.tableLayoutPanel_Plots.Controls.Add(this.bottomRight_panel, 2, 1);
-            this.tableLayoutPanel_Plots.Controls.Add(this.bottomMiddle_panel, 1, 1);
+            this.tableLayoutPanel_Plots.Controls.Add(this.bottomRight_Plot_SplitContainer, 2, 1);
+            this.tableLayoutPanel_Plots.Controls.Add(this.topLeft_panel, 0, 0);
+            this.tableLayoutPanel_Plots.Controls.Add(this.bottomMiddle_Plot_SplitContainer, 1, 1);
+            this.tableLayoutPanel_Plots.Controls.Add(this.bottomLeft_Plot_SplitContainer, 0, 1);
+            this.tableLayoutPanel_Plots.Controls.Add(this.topRight_Plot_SplitContainer, 2, 0);
+            this.tableLayoutPanel_Plots.Controls.Add(this.topMiddle_Plot_SplitContainer, 1, 0);
             this.tableLayoutPanel_Plots.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel_Plots.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel_Plots.Name = "tableLayoutPanel_Plots";
@@ -193,51 +108,15 @@
             this.tableLayoutPanel_Plots.Size = new System.Drawing.Size(3529, 1595);
             this.tableLayoutPanel_Plots.TabIndex = 7;
             // 
-            // bottomRight_panel
+            // topLeft_panel
             // 
-            this.bottomRight_panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.bottomRight_panel.Controls.Add(this.bottomRight_plotView);
-            this.bottomRight_panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomRight_panel.Location = new System.Drawing.Point(2356, 801);
-            this.bottomRight_panel.Name = "bottomRight_panel";
-            this.bottomRight_panel.Size = new System.Drawing.Size(1169, 790);
-            this.bottomRight_panel.TabIndex = 7;
-            // 
-            // bottomRight_plotView
-            // 
-            this.bottomRight_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomRight_plotView.Location = new System.Drawing.Point(0, 0);
-            this.bottomRight_plotView.Name = "bottomRight_plotView";
-            this.bottomRight_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.bottomRight_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.bottomRight_plotView.TabIndex = 0;
-            this.bottomRight_plotView.Text = "plotView2";
-            this.bottomRight_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.bottomRight_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.bottomRight_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
-            // 
-            // bottomMiddle_panel
-            // 
-            this.bottomMiddle_panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.bottomMiddle_panel.Controls.Add(this.bottomMiddle_plotView);
-            this.bottomMiddle_panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomMiddle_panel.Location = new System.Drawing.Point(1180, 801);
-            this.bottomMiddle_panel.Name = "bottomMiddle_panel";
-            this.bottomMiddle_panel.Size = new System.Drawing.Size(1169, 790);
-            this.bottomMiddle_panel.TabIndex = 8;
-            // 
-            // bottomMiddle_plotView
-            // 
-            this.bottomMiddle_plotView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomMiddle_plotView.Location = new System.Drawing.Point(0, 0);
-            this.bottomMiddle_plotView.Name = "bottomMiddle_plotView";
-            this.bottomMiddle_plotView.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.bottomMiddle_plotView.Size = new System.Drawing.Size(1167, 788);
-            this.bottomMiddle_plotView.TabIndex = 0;
-            this.bottomMiddle_plotView.Text = "plotView1";
-            this.bottomMiddle_plotView.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            this.bottomMiddle_plotView.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.bottomMiddle_plotView.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            this.topLeft_panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topLeft_panel.Controls.Add(this.tableLayoutPanel1);
+            this.topLeft_panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topLeft_panel.Location = new System.Drawing.Point(4, 4);
+            this.topLeft_panel.Name = "topLeft_panel";
+            this.topLeft_panel.Size = new System.Drawing.Size(1169, 790);
+            this.topLeft_panel.TabIndex = 7;
             // 
             // tabPage1
             // 
@@ -299,7 +178,7 @@
             // 
             this.tableLayoutPanel_Back.ColumnCount = 1;
             this.tableLayoutPanel_Back.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Back.Controls.Add(this.tabControl1);
+            this.tableLayoutPanel_Back.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel_Back.Controls.Add(this.tableLayoutPanel_bottom, 0, 1);
             this.tableLayoutPanel_Back.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel_Back.Location = new System.Drawing.Point(0, 0);
@@ -354,6 +233,132 @@
             this.label_Y.TabIndex = 1;
             this.label_Y.Text = ", Y : ";
             // 
+            // BottomToolStripPanel
+            // 
+            this.BottomToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.BottomToolStripPanel.Name = "BottomToolStripPanel";
+            this.BottomToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.BottomToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.BottomToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // TopToolStripPanel
+            // 
+            this.TopToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.TopToolStripPanel.Name = "TopToolStripPanel";
+            this.TopToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.TopToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.TopToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // RightToolStripPanel
+            // 
+            this.RightToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.RightToolStripPanel.Name = "RightToolStripPanel";
+            this.RightToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.RightToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.RightToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // LeftToolStripPanel
+            // 
+            this.LeftToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.LeftToolStripPanel.MinimumSize = new System.Drawing.Size(200, 0);
+            this.LeftToolStripPanel.Name = "LeftToolStripPanel";
+            this.LeftToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.LeftToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.LeftToolStripPanel.Size = new System.Drawing.Size(200, 0);
+            // 
+            // ContentPanel
+            // 
+            this.ContentPanel.Size = new System.Drawing.Size(1169, 765);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.toolStrip1, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1167, 788);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // bottomRight_Plot_SplitContainer
+            // 
+            this.bottomRight_Plot_SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.bottomRight_Plot_SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bottomRight_Plot_SplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.bottomRight_Plot_SplitContainer.IsSplitterFixed = true;
+            this.bottomRight_Plot_SplitContainer.Location = new System.Drawing.Point(2356, 801);
+            this.bottomRight_Plot_SplitContainer.Name = "bottomRight_Plot_SplitContainer";
+            this.bottomRight_Plot_SplitContainer.Panel1MinSize = 100;
+            this.bottomRight_Plot_SplitContainer.Size = new System.Drawing.Size(1169, 790);
+            this.bottomRight_Plot_SplitContainer.SplitterDistance = 100;
+            this.bottomRight_Plot_SplitContainer.TabIndex = 0;
+            // 
+            // bottomMiddle_Plot_SplitContainer
+            // 
+            this.bottomMiddle_Plot_SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.bottomMiddle_Plot_SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bottomMiddle_Plot_SplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.bottomMiddle_Plot_SplitContainer.IsSplitterFixed = true;
+            this.bottomMiddle_Plot_SplitContainer.Location = new System.Drawing.Point(1180, 801);
+            this.bottomMiddle_Plot_SplitContainer.Name = "bottomMiddle_Plot_SplitContainer";
+            this.bottomMiddle_Plot_SplitContainer.Panel1MinSize = 100;
+            this.bottomMiddle_Plot_SplitContainer.Size = new System.Drawing.Size(1169, 790);
+            this.bottomMiddle_Plot_SplitContainer.SplitterDistance = 100;
+            this.bottomMiddle_Plot_SplitContainer.TabIndex = 9;
+            // 
+            // bottomLeft_Plot_SplitContainer
+            // 
+            this.bottomLeft_Plot_SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.bottomLeft_Plot_SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bottomLeft_Plot_SplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.bottomLeft_Plot_SplitContainer.IsSplitterFixed = true;
+            this.bottomLeft_Plot_SplitContainer.Location = new System.Drawing.Point(4, 801);
+            this.bottomLeft_Plot_SplitContainer.Name = "bottomLeft_Plot_SplitContainer";
+            this.bottomLeft_Plot_SplitContainer.Panel1MinSize = 100;
+            this.bottomLeft_Plot_SplitContainer.Size = new System.Drawing.Size(1169, 790);
+            this.bottomLeft_Plot_SplitContainer.SplitterDistance = 100;
+            this.bottomLeft_Plot_SplitContainer.TabIndex = 10;
+            // 
+            // topRight_Plot_SplitContainer
+            // 
+            this.topRight_Plot_SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topRight_Plot_SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topRight_Plot_SplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.topRight_Plot_SplitContainer.IsSplitterFixed = true;
+            this.topRight_Plot_SplitContainer.Location = new System.Drawing.Point(2356, 4);
+            this.topRight_Plot_SplitContainer.Name = "topRight_Plot_SplitContainer";
+            this.topRight_Plot_SplitContainer.Panel1MinSize = 100;
+            this.topRight_Plot_SplitContainer.Size = new System.Drawing.Size(1169, 790);
+            this.topRight_Plot_SplitContainer.SplitterDistance = 100;
+            this.topRight_Plot_SplitContainer.TabIndex = 11;
+            // 
+            // topMiddle_Plot_SplitContainer
+            // 
+            this.topMiddle_Plot_SplitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topMiddle_Plot_SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topMiddle_Plot_SplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.topMiddle_Plot_SplitContainer.IsSplitterFixed = true;
+            this.topMiddle_Plot_SplitContainer.Location = new System.Drawing.Point(1180, 4);
+            this.topMiddle_Plot_SplitContainer.Name = "topMiddle_Plot_SplitContainer";
+            this.topMiddle_Plot_SplitContainer.Panel1MinSize = 100;
+            this.topMiddle_Plot_SplitContainer.Size = new System.Drawing.Size(1169, 790);
+            this.topMiddle_Plot_SplitContainer.SplitterDistance = 100;
+            this.topMiddle_Plot_SplitContainer.TabIndex = 12;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(36, 36);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 688);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1167, 25);
+            this.toolStrip1.TabIndex = 0;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
@@ -362,13 +367,8 @@
             this.Controls.Add(this.tableLayoutPanel_Back);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.topLeft_Plotpanel.ResumeLayout(false);
-            this.topMiddle_Plotpanel.ResumeLayout(false);
-            this.bottomLeft_Plotpanel.ResumeLayout(false);
-            this.topRight_Plotpanel.ResumeLayout(false);
             this.tableLayoutPanel_Plots.ResumeLayout(false);
-            this.bottomRight_panel.ResumeLayout(false);
-            this.bottomMiddle_panel.ResumeLayout(false);
+            this.topLeft_panel.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
@@ -377,6 +377,18 @@
             this.tableLayoutPanel_bottom.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomRight_Plot_SplitContainer)).EndInit();
+            this.bottomRight_Plot_SplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bottomMiddle_Plot_SplitContainer)).EndInit();
+            this.bottomMiddle_Plot_SplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bottomLeft_Plot_SplitContainer)).EndInit();
+            this.bottomLeft_Plot_SplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.topRight_Plot_SplitContainer)).EndInit();
+            this.topRight_Plot_SplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.topMiddle_Plot_SplitContainer)).EndInit();
+            this.topMiddle_Plot_SplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -384,29 +396,30 @@
         #endregion
 
         private System.Windows.Forms.Button button_Run;
-        private OxyPlot.WindowsForms.PlotView topMiddle_plotView;
-        private OxyPlot.WindowsForms.PlotView bottomLeft_plotView;
-        private System.Windows.Forms.Panel topLeft_Plotpanel;
-        private System.Windows.Forms.Panel topMiddle_Plotpanel;
-        private System.Windows.Forms.Panel bottomLeft_Plotpanel;
-        private OxyPlot.WindowsForms.PlotView topLeft_plotView;
-        private System.Windows.Forms.Panel topRight_Plotpanel;
-        private OxyPlot.WindowsForms.PlotView topRight_plotView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Plots;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Back;
-        private System.Windows.Forms.Panel bottomRight_panel;
-        private System.Windows.Forms.Panel bottomMiddle_panel;
+        private System.Windows.Forms.Panel topLeft_panel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_bottom;
-        private OxyPlot.WindowsForms.PlotView bottomRight_plotView;
-        private OxyPlot.WindowsForms.PlotView bottomMiddle_plotView;
         private System.Windows.Forms.Panel panel_Plot;
         private OxyPlot.WindowsForms.PlotView plot_plotView;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label_X;
         private System.Windows.Forms.Label label_Y;
+        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
+        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
+        private Plot_SplitContainer bottomMiddle_Plot_SplitContainer;
+        private Plot_SplitContainer bottomRight_Plot_SplitContainer;
+        private Plot_SplitContainer bottomLeft_Plot_SplitContainer;
+        private Plot_SplitContainer topRight_Plot_SplitContainer;
+        private Plot_SplitContainer topMiddle_Plot_SplitContainer;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
     }
 }
 
