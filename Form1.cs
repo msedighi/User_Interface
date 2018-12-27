@@ -40,6 +40,12 @@ namespace Quantization_Tool
         private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max = new OxyPlot.Series.LineSeries();
         private OxyPlot.Series.LineSeries NonVacScale_Boundary_Min = new OxyPlot.Series.LineSeries();
 
+        private PlotModel EnergyScale_LaplacianDerivative_Plot = new PlotModel();
+        private OxyPlot.Series.ScatterSeries[] EnergyScale_LaplacianDerivative_Data;
+
+        private PlotModel EnergyScale_LaplacianDerivative_Plot_smoothed = new PlotModel();
+        private OxyPlot.Series.ScatterSeries[] EnergyScale_LaplacianDerivative_Data_smoothed;
+
         private PlotModel EnergyScale_Commutator_Plot = new PlotModel();
         private OxyPlot.Series.ScatterSeries[] EnergyScale_Commutator_Data;
         private OxyPlot.Series.LineSeries NonVacScale_Boundary_Max_Commutator = new OxyPlot.Series.LineSeries();
@@ -80,6 +86,8 @@ namespace Quantization_Tool
         private State_Variables State;
         private Output_Variables output_Variables;
         private bool Eigenvectors_flag;
+        private bool Perturb_flag;
+        private bool Smooth_flag;
 
         private void Initialize_PointsPlot(PlotModel points_plot, Simulation sim_variables)
         {
@@ -139,14 +147,25 @@ namespace Quantization_Tool
             scaletime_plot.Axes.Add(y);
         }
 
-        private void Initialize_EnergyScalePlot_Base(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
+        private void Initialize_EnergyScalePlot_Base_wBoundary(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
+        {
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, sim_variables, state);
+
+            boundary_max.Color = OxyColors.Red;
+            boundary_min.Color = OxyColors.Red;
+            boundary_max.StrokeThickness = 1;
+            boundary_min.StrokeThickness = 1;
+            //energyscale_plot.Series.Add(boundary_max);
+            //energyscale_plot.Series.Add(boundary_min);
+        }
+        private void Initialize_EnergyScalePlot_Base(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, Simulation sim_variables, State_Variables state)
         {
             //scaletime_plot.PlotAreaBorderThickness = new OxyThickness(0.0);
             energyscale_plot.PlotMargins = new OxyThickness(8.0);
             energyscale_plot.TitleFontWeight = 5;
 
             OxyPlot.Axes.LinearAxis x = new OxyPlot.Axes.LinearAxis();
-            x.Maximum = State.Num_ScaleBins + 2;
+            x.Maximum = State.Num_ScaleBins;
             x.Minimum = 0.0;
             x.PositionAtZeroCrossing = true;
             x.Position = OxyPlot.Axes.AxisPosition.Bottom;
@@ -168,12 +187,6 @@ namespace Quantization_Tool
             y.FontSize = 8.0;
             energyscale_plot.Axes.Add(y);
 
-            boundary_max.Color = OxyColors.Red;
-            boundary_min.Color = OxyColors.Red;
-            boundary_max.StrokeThickness = 1;
-            boundary_min.StrokeThickness = 1;
-            //energyscale_plot.Series.Add(boundary_max);
-            //energyscale_plot.Series.Add(boundary_min);
             for (int i = 0; i < state.Num_Points; i++)
             {
                 energyscale_data[i] = new OxyPlot.Series.ScatterSeries();
@@ -189,7 +202,7 @@ namespace Quantization_Tool
 
         private void Initialize_MassScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            Initialize_EnergyScalePlot_Base_wBoundary(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
             energyscale_plot.Title = "Mass vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = 0.0;
@@ -199,7 +212,7 @@ namespace Quantization_Tool
         }
         private void Initialize_EnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            Initialize_EnergyScalePlot_Base_wBoundary(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
             energyscale_plot.Title = "Energy vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = 0;
@@ -209,7 +222,7 @@ namespace Quantization_Tool
         }
         private void Initialize_LaplacianEnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            Initialize_EnergyScalePlot_Base_wBoundary(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
             energyscale_plot.Title = "Wave Energy vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = 0.0;
@@ -219,13 +232,24 @@ namespace Quantization_Tool
         }
         private void Initialize_CommutatorEnergyScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, OxyPlot.Series.LineSeries boundary_max, OxyPlot.Series.LineSeries boundary_min, Simulation sim_variables, State_Variables state)
         {
-            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
+            Initialize_EnergyScalePlot_Base_wBoundary(energyscale_plot, energyscale_data, boundary_max, boundary_min, sim_variables, state);
             energyscale_plot.Title = "Commutator Energy vs Scale";
             energyscale_plot.Axes[1].Maximum = State.Num_Points;
             energyscale_plot.Axes[1].Minimum = -State.Num_Points;
 
             energyscale_plot.MouseDown += CommutatorEnergyScalePlot_MouseDown;
             energyscale_plot.MouseMove += CommutatorEnergyScalePlot_MouseMove;
+        }
+
+        private void Initialize_LaplacianEnergyDerivativeScalePlot(PlotModel energyscale_plot, OxyPlot.Series.ScatterSeries[] energyscale_data, Simulation sim_variables, State_Variables state)
+        {
+            Initialize_EnergyScalePlot_Base(energyscale_plot, energyscale_data, sim_variables, state);
+            energyscale_plot.Title = "Energy Derivative vs Scale";
+            energyscale_plot.Axes[1].Maximum = 0.01;
+            energyscale_plot.Axes[1].Minimum = 0;
+
+            energyscale_plot.MouseDown += LaplacianEnergyScalePlot_MouseDown;
+            energyscale_plot.MouseMove += LaplacianEnergyScalePlot_MouseMove;
         }
 
         private void Initialize_EnergyScaleHeatMap(PlotModel energyscale_heatmap_plot, OxyPlot.Series.HeatMapSeries energyscale_heatmap, State_Variables state)
@@ -269,11 +293,13 @@ namespace Quantization_Tool
             int _Num_Points = 6;
             int _Dimension = 2;
             Eigenvectors_flag = true;
+            Perturb_flag = false;
+            Smooth_flag = true;
 
             State = new State_Variables(_Num_Points, _Dimension);
             Initial_State = new State_Variables(State.Num_Points, State.Dimension);
 
-            Max_HeatMap_4plot = 120.0;
+            Max_HeatMap_4plot = 160.0;
             Max_HeatMap_4plot1 = 20.0;
             Max_Commutator_Energy = State.Num_Points;
             Min_Energy = 0;
@@ -331,7 +357,7 @@ namespace Quantization_Tool
 
             //
 
-            topMiddle_plotView.Model = Points_Plot;
+            bottomLeft_Plot_SplitContainer.Attach(Points_Plot);
             Initialize_PointsPlot(Points_Plot, Sim_Variables);
             Points_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
 
@@ -349,7 +375,6 @@ namespace Quantization_Tool
                 Points_Plot.Series.Add(Points_Data[i_p]);
             }
 
-            bottomMiddle_plotView.Model = ScaleTime_Plot;
             Initialize_ScaleTimePlot(ScaleTime_Plot, Sim_Variables);
             ScaleTime_MinScale.Color = OxyColors.Red;
             ScaleTime_Min_NonVacScale.Color = OxyColors.Black;
@@ -362,28 +387,35 @@ namespace Quantization_Tool
             ScaleTime_Plot.Series.Add(ScaleTime_MaxScale);
 
             //plot_plotView.Model = EnergyScale_Laplacian_Plot;
-            topRight_plotView.Model = EnergyScale_Laplacian_Plot;
+            topRight_Plot_SplitContainer.Attach(EnergyScale_Laplacian_Plot);
             EnergyScale_Laplacian_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
             Initialize_LaplacianEnergyScalePlot(EnergyScale_Laplacian_Plot, EnergyScale_Laplacian_Data, NonVacScale_Boundary_Max_Laplacian, NonVacScale_Boundary_Min_Laplacian, Sim_Variables, State);
-
-            bottomRight_plotView.Model = EnergyScale_Commutator_Plot;
+            bottomMiddle_Plot_SplitContainer.Attach(EnergyScale_Commutator_Plot);
             EnergyScale_Commutator_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
             Initialize_CommutatorEnergyScalePlot(EnergyScale_Commutator_Plot, EnergyScale_Commutator_Data, NonVacScale_Boundary_Max_Commutator, NonVacScale_Boundary_Min_Commutator, Sim_Variables, State);
-            topLeft_plotView.Model = MassScale_Plot;
+            plot_ToolStripContainer_TopMiddle.Attach(MassScale_Plot);
             MassScale_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
             Initialize_MassScalePlot(MassScale_Plot, MassScale_Data, NonVacScale_Boundary_Max_Mass, NonVacScale_Boundary_Min_Mass, Sim_Variables, State);
-            bottomLeft_plotView.Model = EnergyScale_Plot;
+            bottomRight_Plot_SplitContainer.Attach(EnergyScale_Plot);
             EnergyScale_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
             Initialize_EnergyScalePlot(EnergyScale_Plot, EnergyScale_Data, NonVacScale_Boundary_Max, NonVacScale_Boundary_Min, Sim_Variables, State);
 
+            //bottomMiddle_Plot_SplitContainer.Attach(EnergyScale_LaplacianDerivative_Plot);
+            EnergyScale_LaplacianDerivative_Data = new OxyPlot.Series.ScatterSeries[State.Num_Points];
+            Initialize_LaplacianEnergyDerivativeScalePlot(EnergyScale_LaplacianDerivative_Plot, EnergyScale_LaplacianDerivative_Data, Sim_Variables, State);
+
+            //bottomRight_Plot_SplitContainer.Attach(EnergyScale_LaplacianDerivative_Plot_smoothed);
+            EnergyScale_LaplacianDerivative_Data_smoothed = new OxyPlot.Series.ScatterSeries[State.Num_Points];
+            Initialize_LaplacianEnergyDerivativeScalePlot(EnergyScale_LaplacianDerivative_Plot_smoothed, EnergyScale_LaplacianDerivative_Data_smoothed, Sim_Variables, State);
+
             //plot_plotView.Model = EnergyScale_Commutator_HeatMap_Plot;
-            //bottomRight_plotView.Model = EnergyScale_Commutator_HeatMap_Plot;
+            //bottomMiddle_Plot_SplitContainer.Attach(EnergyScale_Commutator_HeatMap_Plot);
             Initialize_EnergyScaleHeatMap(EnergyScale_Commutator_HeatMap_Plot, EnergyScale_Commutator_HeatMap, State);
             EnergyScale_Commutator_HeatMap_Plot.Title = "Commutator Energy vs Scale";
             EnergyScale_Commutator_HeatMap.Y0 = -State.Num_EnergyBins;
             EnergyScale_Commutator_HeatMap.Y1 = State.Num_EnergyBins;
 
-            //plot_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
+            plot_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
             //topRight_plotView.Model = EnergyScale_Laplacian_HeatMap_Plot;
             Initialize_EnergyScaleHeatMap(EnergyScale_Laplacian_HeatMap_Plot, EnergyScale_Laplacian_HeatMap, State);
             EnergyScale_Laplacian_HeatMap_Plot.Title = "Laplacian Energy vs Scale";
@@ -449,8 +481,8 @@ namespace Quantization_Tool
             Selected_Point.Size = 2;
 
             int i_s = (int)EnergyScale_Laplacian_Plot.Axes[0].InverseTransform(e.Position.X);
-            if (i_s > (State.Num_ScaleBins + 1))
-                i_s = (State.Num_ScaleBins + 1);
+            if (i_s > (State.Num_ScaleBins - 1))
+                i_s = (State.Num_ScaleBins - 1);
             else if (i_s < 0)
                 i_s = 0;
 
@@ -629,7 +661,7 @@ namespace Quantization_Tool
                 }
                 else
                 {
-                    output_Variables = Sim_Variables.Evolve(State, Eigenvectors_flag);
+                    output_Variables = Sim_Variables.Evolve(State, Eigenvectors_flag, Perturb_flag, Smooth_flag);
                 }
 
                 SimTime_Counter++;
@@ -686,10 +718,19 @@ namespace Quantization_Tool
                     EnergyScale_Commutator_Data[i_p].Points.Clear();
                     EnergyScale_Data[i_p].Points.Clear();
                     MassScale_Data[i_p].Points.Clear();
-                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+
+                    EnergyScale_LaplacianDerivative_Data[i_p].Points.Clear();
+                    EnergyScale_LaplacianDerivative_Data_smoothed[i_p].Points.Clear();
+                    for (uint i_s = 0; i_s < State.Num_ScaleBins; i_s++)
                     {   
                         //if (i_p > 0) //Excluding the Vacuum
                             EnergyScale_Laplacian_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Laplacian_Energy[i_s][i_p]));
+
+                        if (i_s < (State.Num_ScaleBins - 1))
+                        {
+                            EnergyScale_LaplacianDerivative_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Laplacian_Energy_Derivative[i_s][i_p]));
+                            EnergyScale_LaplacianDerivative_Data_smoothed[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, Math.Abs(output_Variables.Laplacian_Energy_Derivative_smoothed[i_s][i_p] - output_Variables.Laplacian_Energy_Derivative[i_s][i_p])));
+                        }
 
                         EnergyScale_Commutator_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Commutator_Energy[i_s][i_p]));
                         EnergyScale_Data[i_p].Points.Add(new OxyPlot.Series.ScatterPoint(i_s, output_Variables.Energy_Vector[i_s][i_p]));
@@ -707,11 +748,11 @@ namespace Quantization_Tool
                 EnergyScale_Plot.Axes[1].Minimum = Min_Energy;
 
                 // Laplacian Energy Levels
-                EnergyScale_Laplacian_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                EnergyScale_Laplacian_HeatMap_Data = new double[State.Num_ScaleBins, State.Num_EnergyBins + 1];
                 for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
                     energy_laplacian_variable = (double)(i_e * State.Num_Points) / (double)State.Num_EnergyBins;
-                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    for (uint i_s = 0; i_s < State.Num_ScaleBins; i_s++)
                     {
                         EnergyScale_Laplacian_HeatMap_Data[i_s, i_e] = 0.0;
                         for (uint i_p = 0; i_p < State.Num_Points; i_p++)
@@ -726,11 +767,11 @@ namespace Quantization_Tool
                 EnergyScale_Laplacian_HeatMap.Data = EnergyScale_Laplacian_HeatMap_Data;
 
                 // Commutator Energy Levels
-                EnergyScale_Commutator_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                EnergyScale_Commutator_HeatMap_Data = new double[State.Num_ScaleBins, State.Num_EnergyBins + 1];
                 for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
                     energy_commutator_variable = (double)(i_e * Max_Commutator_Energy * 2) / (double)State.Num_EnergyBins - Max_Commutator_Energy;
-                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    for (uint i_s = 0; i_s < State.Num_ScaleBins; i_s++)
                     {
                         EnergyScale_Commutator_HeatMap_Data[i_s, i_e] = 0.0;
                         for (uint i_p = 0; i_p < State.Num_Points; i_p++)
@@ -745,11 +786,11 @@ namespace Quantization_Tool
                 EnergyScale_Commutator_HeatMap.Data = EnergyScale_Commutator_HeatMap_Data;
 
                 // Energy Levels
-                EnergyScale_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                EnergyScale_HeatMap_Data = new double[State.Num_ScaleBins, State.Num_EnergyBins + 1];
                 for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
                     energy_variable = (double)(i_e * (State.Num_Points - Min_Energy)) / (double)State.Num_EnergyBins + Min_Energy;
-                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    for (uint i_s = 0; i_s < State.Num_ScaleBins; i_s++)
                     {
                         EnergyScale_HeatMap_Data[i_s, i_e] = 0.0;
                         for (uint i_p = 0; i_p < State.Num_Points; i_p++)
@@ -764,11 +805,11 @@ namespace Quantization_Tool
                 EnergyScale_HeatMap.Data = EnergyScale_HeatMap_Data;
 
                 // Mass Levels
-                MassScale_HeatMap_Data = new double[State.Num_ScaleBins + 2, State.Num_EnergyBins + 1];
+                MassScale_HeatMap_Data = new double[State.Num_ScaleBins, State.Num_EnergyBins + 1];
                 for (uint i_e = 0; i_e < (State.Num_EnergyBins + 1); i_e++)
                 {
                     mass_variable = (double)(i_e * State.Num_Points) / (double)State.Num_EnergyBins;
-                    for (uint i_s = 0; i_s < (State.Num_ScaleBins + 2); i_s++)
+                    for (uint i_s = 0; i_s < State.Num_ScaleBins; i_s++)
                     {
                         MassScale_HeatMap_Data[i_s, i_e] = 0.0;
                         for (uint i_p = 0; i_p < State.Num_Points; i_p++)
@@ -795,6 +836,9 @@ namespace Quantization_Tool
                 EnergyScale_Plot.InvalidatePlot(true);
                 MassScale_Plot.InvalidatePlot(true);
 
+                EnergyScale_LaplacianDerivative_Plot_smoothed.InvalidatePlot(true);
+                EnergyScale_LaplacianDerivative_Plot.InvalidatePlot(true);
+
                 EnergyScale_Laplacian_HeatMap_Plot.InvalidatePlot(true);
                 EnergyScale_Commutator_HeatMap_Plot.InvalidatePlot(true);
                 EnergyScale_HeatMap_Plot.InvalidatePlot(true);
@@ -803,6 +847,344 @@ namespace Quantization_Tool
                 //watch.Stop();
                 //var elapsed = watch.ElapsedMilliseconds/1000.0;
             }
+        }
+
+    }
+
+    public enum Plot_Choice{Points, Laplacian, Mass, Similarity, Commutator, ScaleTime};
+
+    public class Plot_ToolStripDropDownButton:ToolStripDropDownButton
+    {
+        private ToolStripMenuItem pointsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem laplacianEnergyToolStripMenuItem;
+        private ToolStripMenuItem massToolStripMenuItem;
+        private ToolStripMenuItem similarityOperatorToolStripMenuItem;
+        private ToolStripMenuItem commutatorOperatorToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem scaleTimePlotToolStripMenuItem;
+
+        public Plot_Choice Chosen_Plot;
+        public event EventHandler Plot_Chosen;
+
+        public Plot_ToolStripDropDownButton()
+        {
+            pointsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            laplacianEnergyToolStripMenuItem = new ToolStripMenuItem();
+            massToolStripMenuItem = new ToolStripMenuItem();
+            similarityOperatorToolStripMenuItem = new ToolStripMenuItem();
+            commutatorOperatorToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            scaleTimePlotToolStripMenuItem = new ToolStripMenuItem();
+            //
+            // Initiation
+            //
+            this.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.DropDownItems.AddRange(new ToolStripItem[] {
+            this.pointsToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.laplacianEnergyToolStripMenuItem,
+            this.massToolStripMenuItem,
+            this.similarityOperatorToolStripMenuItem,
+            this.commutatorOperatorToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.scaleTimePlotToolStripMenuItem});
+            this.Size = new Size(90, 42);
+            this.Text = "Plot";
+            // 
+            // pointsToolStripMenuItem
+            // 
+            this.pointsToolStripMenuItem.Size = new Size(389, 42);
+            this.pointsToolStripMenuItem.Text = "Points";
+            this.pointsToolStripMenuItem.Name = Plot_Choice.Points.ToString();
+            this.pointsToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Size = new Size(386, 6);
+            //
+            // ToolStrip DropDown Menu Items
+            //
+            this.laplacianEnergyToolStripMenuItem.Size = new Size(389, 42);
+            this.laplacianEnergyToolStripMenuItem.Text = "Laplacian Operator";
+            this.laplacianEnergyToolStripMenuItem.Name = Plot_Choice.Laplacian.ToString();
+            this.laplacianEnergyToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            // 
+            // massToolStripMenuItem
+            // 
+            this.massToolStripMenuItem.Size = new Size(389, 42);
+            this.massToolStripMenuItem.Text = "Mass Operator";
+            this.massToolStripMenuItem.Name = Plot_Choice.Mass.ToString();
+            this.massToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            // 
+            // similarityOperatorToolStripMenuItem
+            // 
+            this.similarityOperatorToolStripMenuItem.Size = new Size(389, 42);
+            this.similarityOperatorToolStripMenuItem.Text = "Similarity Operator";
+            this.similarityOperatorToolStripMenuItem.Name = Plot_Choice.Similarity.ToString();
+            this.similarityOperatorToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            // 
+            // commutatorOperatorToolStripMenuItem
+            // 
+            this.commutatorOperatorToolStripMenuItem.Size = new Size(389, 42);
+            this.commutatorOperatorToolStripMenuItem.Text = "Commutator Operator";
+            this.commutatorOperatorToolStripMenuItem.Name = Plot_Choice.Commutator.ToString();
+            this.commutatorOperatorToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Size = new Size(386, 6);
+            // 
+            // scaleTimePlotToolStripMenuItem
+            // 
+            this.scaleTimePlotToolStripMenuItem.Size = new Size(389, 42);
+            this.scaleTimePlotToolStripMenuItem.Text = "Scale-Time Plot";
+            this.scaleTimePlotToolStripMenuItem.Name = Plot_Choice.ScaleTime.ToString();
+            this.scaleTimePlotToolStripMenuItem.Click += Plot_ToolStripMenuItem_Click;
+            //
+
+        }
+
+        public void ChoosePlot(Plot_Choice p)
+        {
+            pointsToolStripMenuItem.CheckState = CheckState.Unchecked;
+            laplacianEnergyToolStripMenuItem.CheckState = CheckState.Unchecked;
+            massToolStripMenuItem.CheckState = CheckState.Unchecked;
+            similarityOperatorToolStripMenuItem.CheckState = CheckState.Unchecked;
+            commutatorOperatorToolStripMenuItem.CheckState = CheckState.Unchecked;
+            scaleTimePlotToolStripMenuItem.CheckState = CheckState.Unchecked;
+
+            switch (p)
+            {
+                case Plot_Choice.Points:
+                    pointsToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Laplacian:
+                    laplacianEnergyToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Mass:
+                    massToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Similarity:
+                    similarityOperatorToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Commutator:
+                    commutatorOperatorToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.ScaleTime:
+                    scaleTimePlotToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+            }
+
+            this.Chosen_Plot = p;
+            this.Plot_Chosen(p, new EventArgs());
+
+        }
+
+        private void Plot_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem Chosen_PlotMenuItem = sender as ToolStripMenuItem;
+            switch (Chosen_PlotMenuItem.Name)
+            {
+                case "Points":
+                    ChoosePlot(Plot_Choice.Points);
+                    break;
+                case "Laplacian":
+                    ChoosePlot(Plot_Choice.Laplacian);
+                    break;
+                case "Mass":
+                    ChoosePlot(Plot_Choice.Mass);
+                    break;
+                case "Similarity":
+                    ChoosePlot(Plot_Choice.Similarity);
+                    break;
+                case "Commutator":
+                    ChoosePlot(Plot_Choice.Commutator);
+                    break;
+                case "ScaleTime":
+                    ChoosePlot(Plot_Choice.ScaleTime);
+                    break;
+            }
+        }
+    }
+
+    public class Plot_ToolStrip:ToolStrip
+    {
+        public Plot_ToolStripDropDownButton ToolStripDropDownButton_Plot;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripDropDownButton viewToolStripDropDownButton;
+
+        private ToolStripMenuItem optionsPlotToolStripMenuItem;
+
+        public Plot_ToolStrip()
+        {
+            this.ToolStripDropDownButton_Plot = new Plot_ToolStripDropDownButton();
+            this.toolStripSeparator1 = new ToolStripSeparator();
+            this.viewToolStripDropDownButton = new ToolStripDropDownButton();
+            this.optionsPlotToolStripMenuItem = new ToolStripMenuItem();
+
+            this.optionsPlotToolStripMenuItem.Text = "Options";
+            this.optionsPlotToolStripMenuItem.CheckOnClick = true;
+
+            this.SuspendLayout();
+
+            this.Dock = DockStyle.None;
+            this.Items.AddRange(new ToolStripItem[]
+            {
+                this.ToolStripDropDownButton_Plot,
+                this.toolStripSeparator1,
+                this.viewToolStripDropDownButton
+            });
+
+            this.viewToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.viewToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] {
+            this.optionsPlotToolStripMenuItem});
+            this.viewToolStripDropDownButton.Text = "View";
+
+
+            this.ResumeLayout(true);
+
+        }
+    }
+
+    public class Plot_SplitContainer:SplitContainer
+    {
+        private TableLayoutPanel Options_Table;
+        private OxyPlot.WindowsForms.PlotView Plot_View;
+
+        public Plot_SplitContainer()
+        {
+            Options_Table = new TableLayoutPanel();
+            Plot_View = new OxyPlot.WindowsForms.PlotView();
+
+            //
+            this.Options_Table.SuspendLayout();
+            this.Panel1.SuspendLayout();
+            this.Panel2.SuspendLayout();
+            this.SuspendLayout();
+            //
+            // 
+            this.BorderStyle = BorderStyle.FixedSingle;
+            this.FixedPanel = FixedPanel.Panel1;
+            this.IsSplitterFixed = true;
+            this.SplitterDistance = 100;
+            // 
+            // Panel1
+            // 
+            this.Panel1.Controls.Add(Options_Table);
+            this.Panel1MinSize = 100;
+            this.Panel1Collapsed = true;
+            // 
+            // Panel2
+            // 
+            this.Panel2.Controls.Add(Plot_View);
+            //
+            // Options Table
+            //
+            Options_Table.ColumnCount = 1;
+            Options_Table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            Options_Table.Dock = DockStyle.Fill;
+            Options_Table.Location = new Point(0, 0);
+            Options_Table.RowCount = 2;
+            Options_Table.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            Options_Table.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            //
+            // Plot View
+            //
+            Plot_View.Dock = DockStyle.Fill;
+            Plot_View.Location = new Point(0, 0);
+            Plot_View.PanCursor = Cursors.Hand;
+            Plot_View.ZoomHorizontalCursor = Cursors.SizeWE;
+            Plot_View.ZoomRectangleCursor = Cursors.SizeNWSE;
+            Plot_View.ZoomVerticalCursor = Cursors.SizeNS;
+            //
+            // ToolStrip
+            //
+            this.Options_Table.ResumeLayout(true);
+            this.Panel1.ResumeLayout(false);
+            this.Panel2.ResumeLayout(false);
+            this.ResumeLayout(false);
+            //
+
+        }
+
+        public void Attach(PlotModel plotModel)
+        {
+            this.Plot_View.Model = plotModel;
+        }
+
+        public void Options_Panel(bool state)
+        {
+            this.Panel1Collapsed = state;
+        }
+    }
+
+    public class Plot_ToolStripContainer:ToolStripContainer
+    {
+        private Plot_SplitContainer Plot_Container;
+        private Plot_ToolStrip ToolStrip_Plot;
+        
+
+        public Plot_ToolStripContainer()
+        {
+            this.Plot_Container = new Plot_SplitContainer();
+            this.ToolStrip_Plot = new Plot_ToolStrip();
+
+            this.SuspendLayout();
+            this.Plot_Container.SuspendLayout();
+
+            this.LeftToolStripPanelVisible = false;
+            this.RightToolStripPanelVisible = false;
+            this.BottomToolStripPanelVisible = false;
+
+            this.Plot_Container.Dock = DockStyle.Fill;
+            this.ContentPanel.Controls.Add(Plot_Container);
+
+            this.TopToolStripPanel.Controls.Add(ToolStrip_Plot);
+
+            // Event
+            this.ToolStrip_Plot.ToolStripDropDownButton_Plot.Plot_Chosen += ToolStripDropDownButton_Plot_Chosen;
+            //
+
+            this.Plot_Container.ResumeLayout(true);
+            this.ResumeLayout(true);
+        }
+
+        private void ToolStripDropDownButton_Plot_Chosen(object sender, EventArgs e)
+        {
+            Plot_Choice p = (Plot_Choice)sender;
+            switch (p)
+            {
+                case Plot_Choice.Points:
+                    pointsToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Laplacian:
+                    laplacianEnergyToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Mass:
+                    massToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Similarity:
+                    similarityOperatorToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.Commutator:
+                    commutatorOperatorToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+                case Plot_Choice.ScaleTime:
+                    scaleTimePlotToolStripMenuItem.CheckState = CheckState.Checked;
+                    break;
+            }
+        }
+
+        public void Attach(PlotModel plotModel)
+        {
+            this.Plot_Container.Attach(plotModel);
+        }
+
+        public void Options_Panel(bool state)
+        {
+            this.Plot_Container.Panel1Collapsed = state;
         }
     }
 
@@ -862,6 +1244,8 @@ namespace Quantization_Tool
         public double[][,] Commutator_Orthonormal_Transformation_Real;
         public double[][,] Commutator_Orthonormal_Transformation_Imag;
 
+        public double[][] Laplacian_Energy_Derivative;
+        public double[][] Laplacian_Energy_Derivative_smoothed;
         public Output_Variables(State_Variables state)
         {
             Scale_Ladder_Original = new double[state.Num_Points];
@@ -873,15 +1257,18 @@ namespace Quantization_Tool
                 Dendogram_Original[i] = new bool[state.Num_Points];
                 Dendogram_Dual[i] = new bool[state.Num_Points];
             }
-            Laplacian_Energy = new double[state.Num_ScaleBins + 2][];
-            Commutator_Energy = new double[state.Num_ScaleBins + 2][];
-            Mass_Vector = new double[state.Num_ScaleBins + 2][];
-            Energy_Vector = new double[state.Num_ScaleBins + 2][];
-            Laplacian_Orthonormal_Transformation = new double[state.Num_ScaleBins + 2][,];
-            Energy_Orthonormal_Transformation = new double[state.Num_ScaleBins + 2][,];
-            Commutator_Orthonormal_Transformation_Real = new double[state.Num_ScaleBins + 2][,];
-            Commutator_Orthonormal_Transformation_Imag = new double[state.Num_ScaleBins + 2][,];
-            for (int i=0; i < (state.Num_ScaleBins + 2); i++)
+            Laplacian_Energy = new double[state.Num_ScaleBins][];
+            Commutator_Energy = new double[state.Num_ScaleBins][];
+            Mass_Vector = new double[state.Num_ScaleBins][];
+            Energy_Vector = new double[state.Num_ScaleBins][];
+            Laplacian_Orthonormal_Transformation = new double[state.Num_ScaleBins][,];
+            Energy_Orthonormal_Transformation = new double[state.Num_ScaleBins][,];
+            Commutator_Orthonormal_Transformation_Real = new double[state.Num_ScaleBins][,];
+            Commutator_Orthonormal_Transformation_Imag = new double[state.Num_ScaleBins][,];
+
+            Laplacian_Energy_Derivative = new double[state.Num_ScaleBins - 1][];
+            Laplacian_Energy_Derivative_smoothed = new double[state.Num_ScaleBins - 1][];
+            for (int i=0; i < state.Num_ScaleBins; i++)
             {
                 Laplacian_Energy[i] = new double[state.Num_Points];
                 Commutator_Energy[i] = new double[state.Num_Points];
@@ -891,6 +1278,12 @@ namespace Quantization_Tool
                 Energy_Orthonormal_Transformation[i] = new double[state.Num_Points, state.Num_Points];
                 Commutator_Orthonormal_Transformation_Real[i] = new double[state.Num_Points, state.Num_Points];
                 Commutator_Orthonormal_Transformation_Imag[i] = new double[state.Num_Points, state.Num_Points];
+
+                if (i < (state.Num_ScaleBins - 1))
+                {
+                    Laplacian_Energy_Derivative[i] = new double[state.Num_Points];
+                    Laplacian_Energy_Derivative_smoothed[i] = new double[state.Num_Points];
+                }
             }
         }
     }
@@ -910,7 +1303,7 @@ namespace Quantization_Tool
             Speed_Range = new double[dimension];
         }
 
-        public Output_Variables Evolve(State_Variables state, bool eigenvectors_flag)
+        public Output_Variables Evolve(State_Variables state, bool eigenvectors_flag, bool perturb_flag, bool smooth_flag)
         {
             Out = new Output_Variables(state);
             // Fixing the pointer handles 
@@ -937,11 +1330,11 @@ namespace Quantization_Tool
                     fixed (double* m = &state.Mass_Ratios[0])
                     {
                         // Un-managed Code!
-                        Q = new Quantization(p, v, m, state.Num_Points, state.Dimension, dt, state.Num_ScaleBins, eigenvectors_flag, false);
+                        Q = new Quantization(p, v, m, state.Num_Points, state.Dimension, dt, state.Num_ScaleBins, eigenvectors_flag, perturb_flag, smooth_flag);
                     }
                 }
 
-                for (uint i_s = 0; i_s < (state.Num_ScaleBins + 2); i_s++)
+                for (uint i_s = 0; i_s < state.Num_ScaleBins; i_s++)
                 {
                     for (uint i_p = 0; i_p < state.Num_Points; i_p++)
                     {
@@ -952,6 +1345,11 @@ namespace Quantization_Tool
 
                         if (eigenvectors_flag)
                         {
+                            if (i_s < (state.Num_ScaleBins - 1))
+                            {
+                                Out.Laplacian_Energy_Derivative[i_s][i_p] = Q.Laplacian_Energy_Derivative[i_s][i_p];
+                                Out.Laplacian_Energy_Derivative_smoothed[i_s][i_p] = Q.Laplacian_Energy_Derivative_smoothed[i_s][i_p];
+                            }
                             for (uint j_p = 0; j_p < state.Num_Points; j_p++)
                             {
                                 Out.Laplacian_Orthonormal_Transformation[i_s][i_p, j_p] = Q.Laplacian_Orthonormal_Transformation[i_s][i_p][j_p];
